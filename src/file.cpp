@@ -5,20 +5,6 @@
 using namespace std;
 
 /**
- * Generate increment ID for a new task
- *
- * @param tasks_length the number of tasks without the new task
- * @returns the new generated ID
- */
-int Task::generateId(size_t tasks_length)
-{
-    if (tasks_length == 0)
-        return 1;
-    else
-        return tasks_length + 1;
-}
-
-/**
  * Extract value of a property given by attr
  *
  * @param taskObj stringified task object
@@ -132,4 +118,19 @@ void JSON::writeToJsonData(Task task)
     } else {
         cerr << "Error opening file for writing!\n";
     }
+}
+
+/**
+ * Generate increment ID for a new task
+ *
+ * @returns the new generated ID
+ */
+int Task::generateId()
+{
+    JSON json;
+    size_t tasks_length = json.parseJsonData().size();
+    if (tasks_length == 0)
+        return 1;
+    else
+        return tasks_length + 1;
 }

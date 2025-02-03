@@ -8,5 +8,5 @@ struct Task
     std::string status;
     std::string createdAt;
     std::string updatedAt;
-    int generateId(size_t tasks_length);
+    int generateId();
 };

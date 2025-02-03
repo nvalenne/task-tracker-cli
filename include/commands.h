@@ -10,7 +10,7 @@ using namespace std;
 class Commands {
     public:
         void addTask(string task);
-        void updateTask(int i, string new_task);
+        void updateTask(int i, string newTask);
         void deleteTask(int id);
         void marksAsInProgress(int id);
         void marksAsDone(int id);

@@ -1,26 +1,65 @@
 #include <iostream>
+#include <chrono>
+
 #include "../include/commands.h"
+#include "../include/file.h"
+
+JSON jsonFile;
 
 void Commands::addTask(string task)
 {
-    std::cout << "Task added : " << task << std::endl;
-};
-void Commands::updateTask(int id, string new_task)
+    auto now = std::chrono::system_clock::now();
+    std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+    std::string time = ctime(&now_c);
+    time.erase(time.find("\n"));
+    struct Task t = {
+        t.generateId(), // To replace by increment ID
+        task,
+        "to-do",
+        time,
+        time};
+    jsonFile.writeToJsonData(t);
+}
+
+
+void Commands::updateTask(int id, string newTask)
 {
-    std::cout << "Task " << id << " updated : " << new_task << std::endl;
+    // vector<Task> tasks = jsonFile.parseJsonData();
+    // Task *taskToUpdate = nullptr;
+    // for (Task t : tasks)
+    // {
+    //     if (t.id == id)
+    //         taskToUpdate = &t;
+    // }
+    // if (taskToUpdate != nullptr)
+    // {
+        
+    // }
+    // else
+    // {
+    //     cerr << "Unable to find task" << endl;
+    // }
 };
-void Commands::deleteTask(int id)
+void Commands::deleteTask(int id){};
+void Commands::marksAsInProgress(int id){};
+void Commands::marksAsDone(int id){};
+void Commands::listTasks(string status)
 {
-    std::cout << "Task " << id << " deleted" << std::endl;
-};
-void Commands::marksAsInProgress(int id)
-{
-    std::cout << "Task " << id << " set to \"In progress\" " << std::endl;
-};
-void Commands::marksAsDone(int id)
-{
-    std::cout << "Task " << id << " set to \"Done\" " << std::endl;
-};
-void Commands::listTasks(string status) {
-    std::cout << "List of tasks" << std::endl;
+    vector<Task> tasks = jsonFile.parseJsonData();
+    if (tasks.empty())
+    {
+        cout << "No tasks found." << endl;
+    }
+    else
+    {
+        for (Task t : tasks)
+        {
+            cout << "Tâche n° " << t.id << " :" << endl
+                 << "\tDescription: " << t.description << endl
+                 << "\tStatus: " << t.status << endl
+                 << "\tCreated at: " << t.createdAt << endl
+                 << "\tUpdated at: " << t.updatedAt << endl
+                 << "----" << endl;
+        }
+    }
 };
