@@ -2,15 +2,7 @@
 
 using namespace std;
 
-/**
- * Extract value of a property given by attr
- *
- * @param taskObj stringified task object
- * @param attr property key
- *
- * @return Value of the property
- */
-string getValuePropertyFromTask(string taskObj, string attr)
+string Task::getValuePropertyFromTask(string taskObj, string attr)
 {
     size_t firstIndex = taskObj.find(attr);
     size_t lastIndex = taskObj.find(",", firstIndex);
@@ -27,11 +19,6 @@ string getValuePropertyFromTask(string taskObj, string attr)
     return attrValue;
 };
 
-/**
- * Parsing tasks.json content to store into a container
- *
- * @returns Container (std::vector) of all the tasks in JSON file
- */
 vector<Task> JSON::parseJsonData(const string& statusFilter)
 {
     ifstream jsonFile(PATH_FILE);
@@ -43,24 +30,28 @@ vector<Task> JSON::parseJsonData(const string& statusFilter)
         f_text.append(line);
     }
 
+    // Work with the content of the json array
     size_t firstBracketIndex = f_text.find("[");
     size_t lastBracketIndex = f_text.find_last_of("]");
 
     for (int i = firstBracketIndex; i < lastBracketIndex; i++)
     {
-        // If task found
+        // For each task found
         if (f_text[i] == '{')
         {
             size_t nextBrace = f_text.find('}', i);
-            string taskObj = f_text.substr(i, nextBrace - i); // Substract the task object
+            string taskObj = f_text.substr(i, nextBrace - i); // Get the task object
 
             Task t;
-            t.id = stoi(getValuePropertyFromTask(taskObj, "id"));
-            t.description = getValuePropertyFromTask(taskObj, "description");
-            t.status = getValuePropertyFromTask(taskObj, "status");
-            t.createdAt = getValuePropertyFromTask(taskObj, "createdAt");
-            t.updatedAt = getValuePropertyFromTask(taskObj, "updatedAt");
 
+            // Get all the values to store in a Task object
+            t.id = stoi(t.getValuePropertyFromTask(taskObj, "id"));
+            t.description = t.getValuePropertyFromTask(taskObj, "description");
+            t.status = t.getValuePropertyFromTask(taskObj, "status");
+            t.createdAt = t.getValuePropertyFromTask(taskObj, "createdAt");
+            t.updatedAt = t.getValuePropertyFromTask(taskObj, "updatedAt");
+
+            // Filtering tasks (or not)
             if (statusFilter.empty()) tasks.push_back(t);
             else if (t.status == statusFilter) tasks.push_back(t);
         }
@@ -70,14 +61,11 @@ vector<Task> JSON::parseJsonData(const string& statusFilter)
     return tasks;
 }
 
-/**
- * Write or overwrite the current task into tasks.json
- *
- * @param t Task object
- */
 void JSON::writeToJsonFile(vector<Task> tasksArr)
 {
+    // Rewrite all the tasks in the file PATH_FILE
     ofstream file(PATH_FILE);
+    
     string new_content = "[\n";
     for (int i = 0; i < tasksArr.size(); i++) {
         Task t = tasksArr[i];
@@ -97,22 +85,15 @@ void JSON::writeToJsonFile(vector<Task> tasksArr)
     file.close();
 }   
 
-/**
- * Generate increment ID for a new task
- *
- * @returns The new generated ID
- */
 int Task::generateId()
 {
+    // Get the higher ID existing, return ID + 1
     JSON json;
-    // size_t tasks_length = json.parseJsonData().size();
-    // if (tasks_length == 0)
-    //     return 1;
-    // else
-    //     return tasks_length + 1;
     vector<Task> tasks = json.parseJsonData();
     int idMax = 0;
-    if (tasks.empty()) return 1;
+    if (tasks.empty()) return 1; // If no task exists
+
+    // Maximum search algorithm
     for (Task t : tasks) {
         if (idMax < t.id) idMax = t.id;
     }

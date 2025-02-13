@@ -1,10 +1,16 @@
 #include <iostream>
-#include <vector>
 
 #include "../include/commands.h"
 
 using namespace std;
 
+/**
+ * @brief A structure to handle command-line arguments.
+ *
+ * This structure contains a command string and a vector of arguments.
+ * It also provides a static method to parse command-line arguments.
+ *
+ */
 struct Arguments
 {
     string command;
@@ -18,7 +24,7 @@ struct Arguments
             args.push_back(argsCli[i]);
         }
         return args;
-    };
+    }
 };
 
 int main(int argc, char *argv[])
@@ -33,27 +39,38 @@ int main(int argc, char *argv[])
     {
         Arguments arguments{argv[1], arguments.parseArgs(argc, argv)};
         Commands commands;
-        if (arguments.command == "add")
-            commands.addTask(arguments.args[0]);
-        else if (arguments.command == "update")
-            commands.updateTask(stoi(arguments.args[0]), arguments.args[1]);
-        else if (arguments.command == "delete")
-            commands.deleteTask(stoi(arguments.args[0]));
-        else if (arguments.command == "mark-in-progress")
-            commands.updateTaskStatus(stoi(arguments.args[0]), "in-progress");
-        else if (arguments.command == "mark-done")
-            commands.updateTaskStatus(stoi(arguments.args[0]), "done");
-        else if (arguments.command == "list")
+        try
         {
-            if (arguments.args.empty()) commands.listTasks();
-            else commands.listTasks(arguments.args[0]);
+            if (arguments.command == "add")
+                commands.addTask(arguments.args[0]);
+            else if (arguments.command == "update")
+                commands.updateTask(stoi(arguments.args[0]), arguments.args[1]);
+            else if (arguments.command == "delete")
+                commands.deleteTask(stoi(arguments.args[0]));
+            else if (arguments.command == "mark-in-progress")
+                commands.updateTaskStatus(stoi(arguments.args[0]), "in-progress");
+            else if (arguments.command == "mark-done")
+                commands.updateTaskStatus(stoi(arguments.args[0]), "done");
+            else if (arguments.command == "list")
+            {
+                if (arguments.args.empty())
+                    // List all tasks (no status specified)
+                    commands.listTasks();
+                else
+                    // List tasks filtered
+                    commands.listTasks(arguments.args[0]);
+            }
+            else
+            {
+                throw runtime_error("Unknown command");
+                return 1;
+            }
         }
-        else
+        catch (exception &e)
         {
-            cerr << "Unknown command." << endl;
+            cerr << e.what() << endl;
             return 1;
         }
-        // for (int i = 0; i < arguments.args.size(); i++) cout << i << arguments.args[i] << endl;
     }
     return 0;
 }

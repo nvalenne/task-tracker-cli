@@ -1,5 +1,3 @@
-#include <iostream>
-#include <chrono>
 #include <algorithm>
 
 #include "../include/commands.h"
@@ -35,50 +33,77 @@ void Commands::updateTask(int id, string newTask)
             jsonFile.writeToJsonFile(tasks);
         }
     }
+    // No task found
     if (taskToUpdate == nullptr)
     {
-        cerr << "Unable to find task" << endl;
+        throw runtime_error("Unable to find task");
     }
 };
 
 void Commands::deleteTask(int id)
 {
     vector<Task> tasks = jsonFile.parseJsonData();
-    for (int i = 0; i < tasks.size(); i++) {
-        if (tasks[i].id == id) tasks.erase(tasks.begin() + i);
+    bool tFound = false;
+    for (int i = 0; i < tasks.size(); i++)
+    {
+        if (tasks[i].id == id)
+        {
+            tFound = true;
+            tasks.erase(tasks.begin() + i);
+        }
+    }
+    // No task found
+    if (!tFound)
+    {
+        throw runtime_error("Unable to find task");
     }
     jsonFile.writeToJsonFile(tasks);
 };
 
-void Commands::updateTaskStatus(int id, string newStatus){
+void Commands::updateTaskStatus(int id, string newStatus)
+{
     vector<Task> tasks = jsonFile.parseJsonData();
-    Task *taskToUpdate;
-    for (Task &t : tasks) {
-        if (t.id == id) {
+    Task *taskToUpdate = nullptr;
+    for (Task &t : tasks)
+    {
+        if (t.id == id)
+        {
             taskToUpdate = &t;
             taskToUpdate->status = newStatus;
             taskToUpdate->updatedAt = getNewDateToString();
             jsonFile.writeToJsonFile(tasks);
         }
     }
+    // No task found
+    if (taskToUpdate == nullptr)
+    {
+        throw runtime_error("Unable to find task");
+    }
 };
+
 void Commands::listTasks(string statusFilter)
 {
-    const string status[3] {"to-do", "in-progress", "done"};
+    const string status[3]{"to-do", "in-progress", "done"};
     vector<Task> tasks;
-    if (statusFilter == "all") tasks = jsonFile.parseJsonData();
-    else if (find(begin(status), end(status), statusFilter) == end(status)) {
-        cerr << "\"" << statusFilter << "\" is not a status known." << endl;
-    } 
-    else tasks = jsonFile.parseJsonData(statusFilter);
 
+    if (statusFilter == "all")
+    {
+        tasks = jsonFile.parseJsonData();
+    }
+    else if (find(begin(status), end(status), statusFilter) == end(status))
+    {
+        throw runtime_error("\"" + statusFilter + "\" is not a status known.");
+    }
+    else
+        tasks = jsonFile.parseJsonData(statusFilter);
+
+    // Prints the tasks
     if (tasks.empty())
     {
         cout << "No tasks found." << endl;
     }
     else
     {
-
         for (Task t : tasks)
         {
             cout << "Tâche n° " << t.id << " :" << endl
