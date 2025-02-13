@@ -12,8 +12,7 @@ class Commands {
         void addTask(string task);
         void updateTask(int i, string newTask);
         void deleteTask(int id);
-        void marksAsInProgress(int id);
-        void marksAsDone(int id);
+        void updateTaskStatus(int id, string status);
         void listTasks(string status = "all");
 };
 

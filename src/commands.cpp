@@ -49,8 +49,18 @@ void Commands::deleteTask(int id)
     jsonFile.writeToJsonFile(tasks);
 };
 
-void Commands::marksAsInProgress(int id){};
-void Commands::marksAsDone(int id){};
+void Commands::updateTaskStatus(int id, string newStatus){
+    vector<Task> tasks = jsonFile.parseJsonData();
+    Task *taskToUpdate;
+    for (Task &t : tasks) {
+        if (t.id == id) {
+            taskToUpdate = &t;
+            taskToUpdate->status = newStatus;
+            taskToUpdate->updatedAt = getNewDateToString();
+            jsonFile.writeToJsonFile(tasks);
+        }
+    }
+};
 void Commands::listTasks(string status)
 {
     vector<Task> tasks = jsonFile.parseJsonData();

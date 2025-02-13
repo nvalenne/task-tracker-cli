@@ -29,8 +29,8 @@ int main(int argc, char *argv[]) {
         if (arguments.command == "add") commands.addTask(arguments.args[0]);
         else if (arguments.command == "update") commands.updateTask(stoi(arguments.args[0]), arguments.args[1]);
         else if (arguments.command == "delete") commands.deleteTask(stoi(arguments.args[0]));
-        else if (arguments.command == "mark-in-progress") commands.marksAsInProgress(stoi(arguments.args[0]));
-        else if (arguments.command == "mark-done") commands.marksAsDone(stoi(arguments.args[0]));
+        else if (arguments.command == "mark-in-progress") commands.updateTaskStatus(stoi(arguments.args[0]), "in-progress");
+        else if (arguments.command == "mark-done") commands.updateTaskStatus(stoi(arguments.args[0]), "done");
         else if (arguments.command == "list") commands.listTasks();
         else {
             cerr << "Unknown command." << endl;

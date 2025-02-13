@@ -104,9 +104,16 @@ void JSON::writeToJsonFile(vector<Task> tasksArr)
 int Task::generateId()
 {
     JSON json;
-    size_t tasks_length = json.parseJsonData().size();
-    if (tasks_length == 0)
-        return 1;
-    else
-        return tasks_length + 1;
+    // size_t tasks_length = json.parseJsonData().size();
+    // if (tasks_length == 0)
+    //     return 1;
+    // else
+    //     return tasks_length + 1;
+    vector<Task> tasks = json.parseJsonData();
+    int idMax = 0;
+    if (tasks.empty()) return 1;
+    for (Task t : tasks) {
+        if (idMax < t.id) idMax = t.id;
+    }
+    return idMax+1;
 }
