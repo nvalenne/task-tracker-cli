@@ -17,6 +17,7 @@ void Commands::addTask(string task)
         getNewDateToString()};
     tasks.push_back(t);
     jsonFile.writeToJsonFile(tasks);
+    cout << "Task added successfully (ID: " << t.id << ")" << endl;
 }
 
 void Commands::updateTask(int id, string newTask)
@@ -31,6 +32,7 @@ void Commands::updateTask(int id, string newTask)
             taskToUpdate->description = newTask;
             taskToUpdate->updatedAt = getNewDateToString();
             jsonFile.writeToJsonFile(tasks);
+            cout << "Task updated successfully (ID: " << t.id << ")" << endl;
         }
     }
     // No task found
@@ -58,6 +60,8 @@ void Commands::deleteTask(int id)
         throw runtime_error("Unable to find task");
     }
     jsonFile.writeToJsonFile(tasks);
+    cout << "Task deleted successfully" << endl;
+
 };
 
 void Commands::updateTaskStatus(int id, string newStatus)
@@ -72,6 +76,7 @@ void Commands::updateTaskStatus(int id, string newStatus)
             taskToUpdate->status = newStatus;
             taskToUpdate->updatedAt = getNewDateToString();
             jsonFile.writeToJsonFile(tasks);
+            cout << "Task mark as "<< newStatus << " successfully (ID: " << t.id << ")" << endl;
         }
     }
     // No task found

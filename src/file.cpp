@@ -65,23 +65,28 @@ void JSON::writeToJsonFile(vector<Task> tasksArr)
 {
     // Rewrite all the tasks in the file PATH_FILE
     ofstream file(PATH_FILE);
-    
-    string new_content = "[\n";
-    for (int i = 0; i < tasksArr.size(); i++) {
-        Task t = tasksArr[i];
-        new_content.append(
-            "\t{\n"
-            "\t\t\"id\": " + to_string(t.id) + ",\n"
-            "\t\t\"description\": \"" + t.description + "\",\n"
-            "\t\t\"status\": \"" + t.status + "\",\n"
-            "\t\t\"createdAt\": \"" + t.createdAt + "\",\n"
-            "\t\t\"updatedAt\": \"" + t.updatedAt + "\"\n"
-            "\t}"
-        );
-        if (i+1 != tasksArr.size()) new_content.append(",\n");
-        else new_content.append("\n]");
+    string new_content;
+
+    if (tasksArr.empty()) {
+        new_content = "";
+    } else {
+        new_content = "[\n";
+        for (int i = 0; i < tasksArr.size(); i++) {
+            Task t = tasksArr[i];
+            new_content.append(
+                "\t{\n"
+                "\t\t\"id\": " + to_string(t.id) + ",\n"
+                "\t\t\"description\": \"" + t.description + "\",\n"
+                "\t\t\"status\": \"" + t.status + "\",\n"
+                "\t\t\"createdAt\": \"" + t.createdAt + "\",\n"
+                "\t\t\"updatedAt\": \"" + t.updatedAt + "\"\n"
+                "\t}"
+            );
+            if (i+1 != tasksArr.size()) new_content.append(",\n");
+            else new_content.append("\n]");
+        }
+        file << new_content;
     }
-    file << new_content;
     file.close();
 }   
 
