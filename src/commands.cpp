@@ -12,7 +12,7 @@ void Commands::addTask(string task)
     struct Task t = {
         t.generateId(), // To replace by increment ID
         task,
-        "to-do",
+        "todo",
         getNewDateToString(),
         getNewDateToString()};
     tasks.push_back(t);
@@ -88,7 +88,7 @@ void Commands::updateTaskStatus(int id, string newStatus)
 
 void Commands::listTasks(string statusFilter)
 {
-    const string status[3]{"to-do", "in-progress", "done"};
+    const string status[3]{"todo", "in-progress", "done"};
     vector<Task> tasks;
 
     if (statusFilter == "all")
