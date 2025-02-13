@@ -1,5 +1,6 @@
 #include <iostream>
 #include <chrono>
+#include <algorithm>
 
 #include "../include/commands.h"
 #include "../include/file.h"
@@ -61,15 +62,23 @@ void Commands::updateTaskStatus(int id, string newStatus){
         }
     }
 };
-void Commands::listTasks(string status)
+void Commands::listTasks(string statusFilter)
 {
-    vector<Task> tasks = jsonFile.parseJsonData();
+    const string status[3] {"to-do", "in-progress", "done"};
+    vector<Task> tasks;
+    if (statusFilter == "all") tasks = jsonFile.parseJsonData();
+    else if (find(begin(status), end(status), statusFilter) == end(status)) {
+        cerr << "\"" << statusFilter << "\" is not a status known." << endl;
+    } 
+    else tasks = jsonFile.parseJsonData(statusFilter);
+
     if (tasks.empty())
     {
         cout << "No tasks found." << endl;
     }
     else
     {
+
         for (Task t : tasks)
         {
             cout << "Tâche n° " << t.id << " :" << endl

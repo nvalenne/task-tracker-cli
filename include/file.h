@@ -7,10 +7,12 @@
 #define PATH_FILE "data/tasks.json"
 #endif
 
+using namespace std;
+
 class JSON
 {
 
 public:
-    std::vector<Task> parseJsonData();
+    vector<Task> parseJsonData(const string& statusFilter = "");
     void writeToJsonFile(std::vector<Task> tasksArr);
 };

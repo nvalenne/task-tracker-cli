@@ -32,7 +32,7 @@ string getValuePropertyFromTask(string taskObj, string attr)
  *
  * @returns Container (std::vector) of all the tasks in JSON file
  */
-vector<Task> JSON::parseJsonData()
+vector<Task> JSON::parseJsonData(const string& statusFilter)
 {
     ifstream jsonFile(PATH_FILE);
     vector<Task> tasks;
@@ -61,7 +61,8 @@ vector<Task> JSON::parseJsonData()
             t.createdAt = getValuePropertyFromTask(taskObj, "createdAt");
             t.updatedAt = getValuePropertyFromTask(taskObj, "updatedAt");
 
-            tasks.push_back(t);
+            if (statusFilter.empty()) tasks.push_back(t);
+            else if (t.status == statusFilter) tasks.push_back(t);
         }
     }
 
