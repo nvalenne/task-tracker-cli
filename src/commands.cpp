@@ -20,8 +20,34 @@ void Commands::addTask(string task)
     jsonFile.writeToJsonFile(tasks);
 }
 
-void Commands::updateTask(int id, string newTask){};
-void Commands::deleteTask(int id){};
+void Commands::updateTask(int id, string newTask)
+{
+    vector<Task> tasks = jsonFile.parseJsonData();
+    Task *taskToUpdate = nullptr;
+    for (Task &t : tasks)
+    {
+        if (t.id == id)
+        {
+            taskToUpdate = &t;
+            taskToUpdate->description = newTask;
+            taskToUpdate->updatedAt = getNewDateToString();
+            jsonFile.writeToJsonFile(tasks);
+        }
+    }
+    if (taskToUpdate == nullptr)
+    {
+        cerr << "Unable to find task" << endl;
+    }
+};
+
+void Commands::deleteTask(int id)
+{
+    vector<Task> tasks = jsonFile.parseJsonData();
+    for (int i = 0; i < tasks.size(); i++) {
+        if (tasks[i].id == id) tasks.erase(tasks.begin() + i);
+    }
+    jsonFile.writeToJsonFile(tasks);
+};
 
 void Commands::marksAsInProgress(int id){};
 void Commands::marksAsDone(int id){};
