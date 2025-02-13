@@ -1,6 +1,4 @@
 #include "../include/file.h"
-#include <algorithm>
-#include <sstream>
 
 using namespace std;
 
@@ -10,15 +8,21 @@ using namespace std;
  * @param taskObj stringified task object
  * @param attr property key
  *
- * @returns value of the property
+ * @return Value of the property
  */
 string getValuePropertyFromTask(string taskObj, string attr)
 {
     size_t firstIndex = taskObj.find(attr);
     size_t lastIndex = taskObj.find(",", firstIndex);
 
+    // if it's last one property (no comma found), last index is at the last quote
+    if (lastIndex == string::npos) lastIndex = taskObj.size()-1;
     int sizeKey = 2 + attr.size();
-    string attrValue = taskObj.substr(firstIndex + sizeKey, lastIndex - firstIndex - sizeKey);
+
+    string attrValue;
+    // case which "id" value has not quotes
+    if (attr == "id") attrValue = taskObj.substr(firstIndex + sizeKey, lastIndex - firstIndex - sizeKey);
+    else attrValue = taskObj.substr(firstIndex + sizeKey + 2, lastIndex - firstIndex - sizeKey - 3);
 
     return attrValue;
 };
@@ -26,11 +30,11 @@ string getValuePropertyFromTask(string taskObj, string attr)
 /**
  * Parsing tasks.json content to store into a container
  *
- * @returns tasks
+ * @returns Container (std::vector) of all the tasks in JSON file
  */
 vector<Task> JSON::parseJsonData()
 {
-    ifstream jsonFile("data/tasks.json");
+    ifstream jsonFile(PATH_FILE);
     vector<Task> tasks;
 
     string line, f_text;
@@ -70,60 +74,32 @@ vector<Task> JSON::parseJsonData()
  *
  * @param t Task object
  */
-void JSON::writeToJsonData(Task task)
+void JSON::writeToJsonFile(vector<Task> tasksArr)
 {
-    string filename = "data/tasks.json";
-    ifstream jsonFile(filename);
-    ostringstream buffer;
-
-    if (jsonFile.is_open()) {
-        buffer << jsonFile.rdbuf();
-        jsonFile.close();
+    ofstream file(PATH_FILE);
+    string new_content = "[\n";
+    for (int i = 0; i < tasksArr.size(); i++) {
+        Task t = tasksArr[i];
+        new_content.append(
+            "\t{\n"
+            "\t\t\"id\": " + to_string(t.id) + ",\n"
+            "\t\t\"description\": \"" + t.description + "\",\n"
+            "\t\t\"status\": \"" + t.status + "\",\n"
+            "\t\t\"createdAt\": \"" + t.createdAt + "\",\n"
+            "\t\t\"updatedAt\": \"" + t.updatedAt + "\"\n"
+            "\t}"
+        );
+        if (i+1 != tasksArr.size()) new_content.append(",\n");
+        else new_content.append("\n]");
     }
-
-    string jsonData = buffer.str();
-
-    if (jsonData.empty()) {
-        jsonData = "[\n";
-    } else {
-        // Erase ] to insert the new task
-        size_t pos = jsonData.rfind("]");
-        if (pos != string::npos) {
-            jsonData.erase(pos);
-        }
-        // Add comma if not first element
-        if (jsonData.length() > 2) {
-            jsonData += ",\n";
-        }
-    }
-
-    string taskJson =
-        "  {\n"
-        "    \"id\": " + to_string(task.id) + ",\n"
-        "    \"description\": \"" + task.description + "\",\n"
-        "    \"status\": \"" + task.status + "\",\n"
-        "    \"createdAt\": \"" + task.createdAt + "\",\n"
-        "    \"updatedAt\": \"" + task.updatedAt + "\"\n"
-        "  }";
-    
-    // Add the task and close array
-    jsonData += taskJson + "\n]";
-
-    // Overwrite the file with the updated data
-    ofstream outFile(filename);
-    if (outFile.is_open()) {
-        outFile << jsonData;
-        outFile.close();
-        cout << "Task added successfully!\n";
-    } else {
-        cerr << "Error opening file for writing!\n";
-    }
-}
+    file << new_content;
+    file.close();
+}   
 
 /**
  * Generate increment ID for a new task
  *
- * @returns the new generated ID
+ * @returns The new generated ID
  */
 int Task::generateId()
 {

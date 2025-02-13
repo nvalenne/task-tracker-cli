@@ -3,44 +3,26 @@
 
 #include "../include/commands.h"
 #include "../include/file.h"
+#include "../include/utils.h"
 
 JSON jsonFile;
 
 void Commands::addTask(string task)
 {
-    auto now = std::chrono::system_clock::now();
-    std::time_t now_c = std::chrono::system_clock::to_time_t(now);
-    std::string time = ctime(&now_c);
-    time.erase(time.find("\n"));
+    vector<Task> tasks = jsonFile.parseJsonData();
     struct Task t = {
         t.generateId(), // To replace by increment ID
         task,
         "to-do",
-        time,
-        time};
-    jsonFile.writeToJsonData(t);
+        getNewDateToString(),
+        getNewDateToString()};
+    tasks.push_back(t);
+    jsonFile.writeToJsonFile(tasks);
 }
 
-
-void Commands::updateTask(int id, string newTask)
-{
-    // vector<Task> tasks = jsonFile.parseJsonData();
-    // Task *taskToUpdate = nullptr;
-    // for (Task t : tasks)
-    // {
-    //     if (t.id == id)
-    //         taskToUpdate = &t;
-    // }
-    // if (taskToUpdate != nullptr)
-    // {
-        
-    // }
-    // else
-    // {
-    //     cerr << "Unable to find task" << endl;
-    // }
-};
+void Commands::updateTask(int id, string newTask){};
 void Commands::deleteTask(int id){};
+
 void Commands::marksAsInProgress(int id){};
 void Commands::marksAsDone(int id){};
 void Commands::listTasks(string status)
